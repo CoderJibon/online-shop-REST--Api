@@ -33,7 +33,7 @@ const getSlug = require("../utility/getSlug");
        id : getRandomID(),
        ...req.body,
        slug : getSlug(req.body?.name),
-       category_photo : req.file ? req.file.originalname : "//i.ibb.co/ZNFNBjp/category.webp"
+       category_photo : req.file ? req.file.filename : "//i.ibb.co/ZNFNBjp/category.webp"
    });
 
    //validated
@@ -81,7 +81,7 @@ const getSlug = require("../utility/getSlug");
         Category[index] = {
             ...Category[index],
             ...req.body,
-            category_photo : req.file ? req.file.originalname : Category[index]?.category_photo
+            category_photo : req.file ? req.file.filename : Category[index]?.category_photo
         };
 
         //update data

@@ -28,7 +28,7 @@ const createProduct = (req, res) => {
   //product multiple image
   let pdImg = [];
   req.files?.forEach((pd) => {
-    pdImg.push(pd?.originalname);
+    pdImg.push(pd?.filename);
   });
 
   //Product data add
@@ -104,7 +104,7 @@ const ProductUpdate = (req, res) => {
   //product multiple image
   let pdImg = [];
   req.files.forEach((pd) => {
-    pdImg.push(pd?.originalname);
+    pdImg.push(pd?.filename);
   });
 
   //validated

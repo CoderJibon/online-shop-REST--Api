@@ -30,7 +30,7 @@ const createCustomer = (req,res) => {
     customer.push({
         id : getRandomID(),
         ...req.body,
-        customer_photo : req.file ? req.file.originalname : "//i.ibb.co/DDbjkbw/profile.png"
+        customer_photo : req.file ? req.file.filename : "//i.ibb.co/DDbjkbw/profile.png"
     });
 
     //validated
@@ -111,7 +111,7 @@ const customerUpdate = (req,res) => {
         customer[index] = {
             ...customer[index],
             ...req.body,
-            customer_photo : req.file ? req.file.originalname : customer[index]?.customer_photo
+            customer_photo : req.file ? req.file.filename : customer[index]?.customer_photo
         };
 
         //update data

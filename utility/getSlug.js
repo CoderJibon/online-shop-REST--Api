@@ -1,6 +1,6 @@
 
 //get slug
-const getSlug = (title) => {
+const getSlug = (title = "") => {
 
    
 

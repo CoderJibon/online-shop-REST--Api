@@ -32,7 +32,7 @@ const getRandomID = require("../utility/getRandomID");
    tag.push({
        id : getRandomID(),
        ...req.body,
-       slug : getSlug(req.body.name)
+       slug : getSlug(req.body?.name)
    });
 
    
@@ -61,7 +61,7 @@ const getRandomID = require("../utility/getRandomID");
 
 /**
  * @desc Tag Single data Update 
- * @name PUT api/v1/tag/slug
+ * @name PUT api/v1/tag/id
  * @access public
  */
  const tagUpdate = (req,res) => {
@@ -69,14 +69,14 @@ const getRandomID = require("../utility/getRandomID");
     //all tag db 
    const tag = getTagDB();
 
-    //get slug
-    const { slug }  = req.params;
+    //get id
+    const { id }  = req.params;
 
     //get index
-    const index = tag.findIndex(data => data.slug == slug);
+    const index = tag.findIndex(data => data.id == id);
 
     //validated
-    if(tag.some(data => data.slug == slug)){
+    if(tag.some(data => data.id == id)){
 
         //update customer data
         tag[index] = {
@@ -108,7 +108,7 @@ const getRandomID = require("../utility/getRandomID");
 
 /**
  * @desc tag Single data delete
- * @name DELATE api/v1/tag/slug
+ * @name DELATE api/v1/tag/id
  * @access public
  */
  const tagDelete = ( req, res ) => {
@@ -116,13 +116,13 @@ const getRandomID = require("../utility/getRandomID");
     const tag = getTagDB();
 
     //get slug
-    const { slug }  = req.params;
+    const { id }  = req.params;
 
     //get data
-    const allTag = tag.filter(data => data.slug != slug);
+    const allTag = tag.filter(data => data.id != id);
 
     //validated
-    if(tag.some(data => data.slug == slug)){
+    if(tag.some(data => data.id == id)){
       
        //update data
        updateTagDB(allTag);

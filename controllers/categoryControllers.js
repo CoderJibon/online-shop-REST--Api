@@ -61,21 +61,21 @@ const getSlug = require("../utility/getSlug");
 
 /**
  * @desc Category Single data Update 
- * @name PUT api/v1/category/slug
+ * @name PUT api/v1/category/id
  * @access public
  */
  const categoryUpdate = (req,res) => {
     //all Category db 
     const Category = getCategoryDB();
 
-    //get slug
-    const { slug }  = req.params;
+    //get id
+    const { id }  = req.params;
 
     //get index
-    const index = Category.findIndex(data => data.slug == slug);
+    const index = Category.findIndex(data => data.id == id);
 
     //validated
-    if(Category.some(data => data.slug == slug)){
+    if(Category.some(data => data.id == id)){
 
         //update Category data
         Category[index] = {
@@ -115,14 +115,14 @@ const getSlug = require("../utility/getSlug");
     //all Category db 
     const Category = getCategoryDB();
 
-    //get slug
-    const { slug }  = req.params;
+    //get id
+    const { id }  = req.params;
 
     //get data
-    const allData = Category.filter(data => data.slug != slug);
+    const allData = Category.filter(data => data.id != id);
 
     //validated
-    if(Category.some(data => data.slug == slug)){
+    if(Category.some(data => data.id == id)){
       
        //update data
        updateCategoryDB(allData);

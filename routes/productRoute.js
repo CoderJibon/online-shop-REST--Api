@@ -8,7 +8,8 @@ const productRouter = express.Router();
 
 //routes
 productRouter.route('/').get(getAllProduct).post(multerProductStorage(),createProduct);
-productRouter.route('/:slug').get(productView).put(multerProductStorage(),ProductUpdate).delete(productDelete);
+productRouter.route('/:slug').get(productView);
+productRouter.route('/:id').put(multerProductStorage(),ProductUpdate).delete(productDelete);
 
 
 //module exports

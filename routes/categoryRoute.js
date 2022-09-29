@@ -9,7 +9,8 @@ const categoryRouter = express.Router();
 
 //routes
 categoryRouter.route('/').get(allCategoryInfo).post(multerCategoryStorage(),createCategory);
-categoryRouter.route('/:slug').put(multerCategoryStorage(),categoryUpdate).delete(CategoryDelete);
+categoryRouter.route('/:id').put(multerCategoryStorage(),categoryUpdate).delete(CategoryDelete);
+
 
 
 //module exports

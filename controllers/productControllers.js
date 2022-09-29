@@ -1,204 +1,177 @@
 //required
 const { getProductDB, updateProductDB } = require("../utility/read_&_write");
 const getRandomID = require("../utility/getRandomID");
-const getSlug = require('../utility/getSlug');
-
+const getSlug = require("../utility/getSlug");
 
 /**
  * @desc Get All Product
  * @name GET api/v1/product
  * @access public
  */
- const getAllProduct = (req,res) => {
+const getAllProduct = (req, res) => {
+  //all  Product db
+  const Product = getProductDB();
 
-    //all  Product db 
-    const Product = getProductDB();
-
-    //send Product data
-    res.status(200).json(Product);
-}
-
+  //send Product data
+  res.status(200).json(Product);
+};
 
 /**
  * @desc Create Product
  * @name POST api/v1/product
  * @access public
  */
- const createProduct = (req,res) => {
+const createProduct = (req, res) => {
+  //all Product db
+  const Product = getProductDB();
 
-    //all Product db 
-   const Product = getProductDB();
+  //product multiple image
+  let pdImg = [];
+  req.files?.forEach((pd) => {
+    pdImg.push(pd?.originalname);
+  });
 
+  //Product data add
+  Product.push({
+    id: getRandomID(),
+    ...req.body,
+    slug: getSlug(req.body?.name),
+    product_photo: req.files ? pdImg : "//i.ibb.co/DDbjkbw/profile.png",
+  });
 
-   //product multiple image
-   let pdImg = [];
-   req.files.forEach(pd => {
-        pdImg.push(pd?.originalname);
-   });
-
-
-     //Product data add
-     Product.push({
-        id : getRandomID(),
-        ...req.body,
-        slug : getSlug(req.body.name),
-        product_photo : req.files ? pdImg : "//i.ibb.co/DDbjkbw/profile.png"
+  //validated
+  if (!req.body) {
+    //responsive
+    res.status(400).json({
+      status: false,
+      message: "Invalid Product data!",
     });
+  } else {
+    //update data
+    updateProductDB(Product);
 
-    //validated
-    if(!req.body){
-        //responsive
-        res.status(400).json({
-            "status"  : false,
-            "message" : "Invalid Product data!"
-        });
-
-    }else{
-        //update data
-        updateProductDB(Product);
-
-        //responsive
-        res.status(201).json({
-            "status"  : true,
-            "message" : "Product create successfully"
-        });
-      
-    }  
-  
-}
-
+    //responsive
+    res.status(201).json({
+      status: true,
+      message: "Product create successfully",
+    });
+  }
+};
 
 /**
  * @desc Product single data view
  * @name GET api/v1/product/slug
  * @access public
  */
- const productView = (req,res) => {
-    //all Product db 
-    const Product = getProductDB();
+const productView = (req, res) => {
+  //all Product db
+  const Product = getProductDB();
 
-    //get slug
-    const { slug }  = req.params;
+  //get slug
+  const { slug } = req.params;
 
+  //get data
+  const data = Product.find((data) => data.slug == slug);
 
-    //get data
-    const data = Product.find(data => data.slug == slug);
-
-    //validated
-    if(Product.some(data => data.slug == slug)){
-        //responsive
-        res.status(200).json(data);
-
-   }else{
-       //responsive
-       res.status(404).json({
-           "status"  : false,
-           "message" : "Product not Found!!"
-       });
-      
-     
-   }  
-   
-}
-
+  //validated
+  if (Product.some((data) => data.slug == slug)) {
+    //responsive
+    res.status(200).json(data);
+  } else {
+    //responsive
+    res.status(404).json({
+      status: false,
+      message: "Product not Found!!",
+    });
+  }
+};
 
 /**
- * @desc Product Single data Update 
- * @name PUT api/v1/product/slug
+ * @desc Product Single data Update
+ * @name PUT api/v1/product/id
  * @access public
  */
- const ProductUpdate = (req,res) => {
-    //all Product db 
-    const Product = getProductDB();
+const ProductUpdate = (req, res) => {
+  //all Product db
+  const Product = getProductDB();
 
-    //get slug
-    const { slug }  = req.params;
+  //get id
+  const { id } = req.params;
 
-    //get index
-    const index = Product.findIndex(data => data.slug == slug);
+  //get index
+  const index = Product.findIndex((data) => data.id == id);
 
+  //product multiple image
+  let pdImg = [];
+  req.files.forEach((pd) => {
+    pdImg.push(pd?.originalname);
+  });
 
-    //product multiple image
-   let pdImg = [];
-   req.files.forEach(pd => {
-        pdImg.push(pd?.originalname);
-   });
+  //validated
+  if (Product.some((data) => data.id == id)) {
+    //update Product data
+    Product[index] = {
+      ...Product[index],
+      ...req.body,
+      product_photo: req.files ? pdImg : Product[index]?.product_photo,
+    };
 
-    //validated
-    if(Product.some(data => data.slug == slug)){
+    //update data
+    updateProductDB(Product);
 
-        //update Product data
-        Product[index] = {
-            ...Product[index],
-            ...req.body,
-            product_photo : req.files ? pdImg : Product[index]?.product_photo
-        };
-
-        //update data
-        updateProductDB(Product);
-
-        //responsive
-        res.status(200).json({
-            "status"  : true,
-            "message" : "Product Update Successfully"
-        });
-     
-   }else{
-
-        //responsive
-        res.status(404).json({
-            "status"  : false,
-            "message" : "Product not Found!!"
-        });
-
-        
-   }  
-}
-
+    //responsive
+    res.status(200).json({
+      status: true,
+      message: "Product Update Successfully",
+    });
+  } else {
+    //responsive
+    res.status(404).json({
+      status: false,
+      message: "Product not Found!!",
+    });
+  }
+};
 
 /**
  * @desc Product Single data delete
- * @name DELATE api/v1/product/slug
+ * @name DELATE api/v1/product/id
  * @access public
  */
- const productDelete = ( req, res ) => {
-    //all Product db 
-    const Product = getProductDB();
+const productDelete = (req, res) => {
+  //all Product db
+  const Product = getProductDB();
 
-    //get slug
-    const { slug }  = req.params;
+  //get id
+  const { id } = req.params;
 
-    //get data
-    const allData = Product.filter(data => data.slug != slug);
+  //get data
+  const allData = Product.filter((data) => data.id != id);
 
-    //validated
-    if(Product.some(data => data.slug == slug)){
-      
-       //update data
-       updateProductDB(allData);
+  //validated
+  if (Product.some((data) => data.id == id)) {
+    //update data
+    updateProductDB(allData);
 
-       //responsive
-       res.status(201).json({
-           "status"  : true,
-           "message" : "Product Delete successfully"
-       });
-       
-   }else{
-        //responsive
-        res.status(404).json({
-           "status"  : false,
-           "message" : "Product not Found!!"
-       });
-
-   }  
-
-}
+    //responsive
+    res.status(201).json({
+      status: true,
+      message: "Product Delete successfully",
+    });
+  } else {
+    //responsive
+    res.status(404).json({
+      status: false,
+      message: "Product not Found!!",
+    });
+  }
+};
 
 //module exports
 module.exports = {
-    getAllProduct,
-    createProduct,
-    productView,
-    ProductUpdate,
-    productDelete
-}
+  getAllProduct,
+  createProduct,
+  productView,
+  ProductUpdate,
+  productDelete,
+};

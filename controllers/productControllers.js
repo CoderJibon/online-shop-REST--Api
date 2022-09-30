@@ -36,7 +36,7 @@ const createProduct = (req, res) => {
     id: getRandomID(),
     ...req.body,
     slug: getSlug(req.body?.name),
-    product_photo: req.files ? pdImg : "//i.ibb.co/DDbjkbw/profile.png",
+    product_photo: req.files ? pdImg : "//i.ibb.co/vzzJm1V/Tshirt.jpg",
   });
 
   //validated

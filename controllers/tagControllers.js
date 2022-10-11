@@ -81,7 +81,8 @@ const getRandomID = require("../utility/getRandomID");
         //update customer data
         tag[index] = {
             ...tag[index],
-            ...req.body
+            ...req.body,
+            slug : getSlug(req.body?.name)
         };
 
         //update data

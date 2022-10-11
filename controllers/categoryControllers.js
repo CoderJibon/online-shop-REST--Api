@@ -1,5 +1,5 @@
 //required
-const { getCategoryDB, updateCategoryDB } = require("../utility/read_&_write");
+const { getCategoryDB, updateCategoryDB, removeCategoryOldImage } = require("../utility/read_&_write");
 const getRandomID = require("../utility/getRandomID");
 const getSlug = require("../utility/getSlug");
 
@@ -33,7 +33,7 @@ const getSlug = require("../utility/getSlug");
        id : getRandomID(),
        ...req.body,
        slug : getSlug(req.body?.name),
-       category_photo : req.file ? req.file.filename : "//i.ibb.co/ZNFNBjp/category.webp"
+       category_photo : req.file ? req.file.filename : ""
    });
 
    //validated
@@ -71,9 +71,23 @@ const getSlug = require("../utility/getSlug");
     //get id
     const { id }  = req.params;
 
+    //old pic
+    const oldImg = Category.find(item => item.id == id );
+
     //get index
     const index = Category.findIndex(data => data.id == id);
 
+    
+    //update image
+    let updateCatPhoto = "";
+
+    if(req.file){
+        updateCatPhoto = req?.file?.filename;
+        removeCategoryOldImage(oldImg?.category_photo);
+    }else{
+        updateCatPhoto = oldImg?.category_photo;
+    }
+    
     //validated
     if(Category.some(data => data.id == id)){
 
@@ -81,7 +95,8 @@ const getSlug = require("../utility/getSlug");
         Category[index] = {
             ...Category[index],
             ...req.body,
-            category_photo : req.file ? req.file.filename : Category[index]?.category_photo
+            slug : getSlug(req.body?.name),
+            category_photo : updateCatPhoto
         };
 
         //update data
@@ -120,6 +135,11 @@ const getSlug = require("../utility/getSlug");
 
     //get data
     const allData = Category.filter(data => data.id != id);
+
+     //remove pic
+     const removeImg = Category.find(item => item.id == id );
+
+    removeCategoryOldImage(removeImg?.category_photo);
 
     //validated
     if(Category.some(data => data.id == id)){

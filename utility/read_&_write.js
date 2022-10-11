@@ -1,5 +1,5 @@
 // package include
-const { readFileSync , writeFileSync } = require('fs');
+const { readFileSync , writeFileSync, unlinkSync } = require('fs');
 const path = require('path');
 
 // get all customer DB
@@ -49,9 +49,14 @@ const updateCategoryDB = (obj) => {
     writeFileSync(path.join(__dirname,"../DB/category.json"),JSON.stringify(obj));
 }
 
+//remove Category OLD image
+const removeCategoryOldImage =(fileName) => {
+    // remove product old image
+    unlinkSync(path.join(__dirname,`../public/category/${fileName}`));
+}
+
 // get all Product DB
 const getProductDB = () =>{
-
     // Product db json to obj
     return JSON.parse(readFileSync(path.join(__dirname,"../DB/product.json")));
 
@@ -59,10 +64,39 @@ const getProductDB = () =>{
 
 //update Product DB
 const updateProductDB = (obj) => {
-
     // update Product DB
     writeFileSync(path.join(__dirname,"../DB/product.json"),JSON.stringify(obj));
 }
+
+//remove Product OLD image
+const removeProductOldImage =(fileName) => {
+    // remove product old image
+    unlinkSync(path.join(__dirname,`../public/product/${fileName}`));
+}
+
+// get all brand db
+
+const getBrandDb = () =>{
+
+    // customer json from db
+   const brandDb =  JSON.parse(readFileSync(path.join(__dirname , '../db/brand.json')));
+
+//return customer db
+
+   return brandDb;
+
+}
+
+// update brand db
+
+const updateBrandDb = (obj) =>{
+
+    // update customer Db
+    writeFileSync(path.join(__dirname , '../db/brand.json') , JSON.stringify(obj));
+
+}
+
+
 
 //module exports
 module.exports = {
@@ -73,7 +107,11 @@ module.exports = {
     getCategoryDB,
     updateCategoryDB,
     getProductDB,
-    updateProductDB
+    updateProductDB,
+    removeProductOldImage,
+    removeCategoryOldImage,
+    getBrandDb,
+    updateBrandDb
 }
 
 

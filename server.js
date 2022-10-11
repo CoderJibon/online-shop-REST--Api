@@ -6,6 +6,7 @@ const tagRouter = require("./routes/tagRoute");
 const categoryRouter = require("./routes/categoryRoute");
 const productRouter = require("./routes/productRoute");
 const cors = require("cors");
+const brandRouter = require("./routes/brandRoute");
 
 //Environment variable
 dotenv.config();
@@ -27,6 +28,7 @@ app.use("/api/v1/customers", customersRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/tag", tagRouter);
+app.use("/api/v1/brand", brandRouter);
 
 //server listen
 app.listen(PORT, () => {

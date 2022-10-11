@@ -1,5 +1,5 @@
 //required
-const { getProductDB, updateProductDB } = require("../utility/read_&_write");
+const { getProductDB, updateProductDB, removeProductOldImage } = require("../utility/read_&_write");
 const getRandomID = require("../utility/getRandomID");
 const getSlug = require("../utility/getSlug");
 
@@ -36,7 +36,7 @@ const createProduct = (req, res) => {
     id: getRandomID(),
     ...req.body,
     slug: getSlug(req.body?.name),
-    product_photo: req.files ? pdImg : "//i.ibb.co/vzzJm1V/Tshirt.jpg",
+    product_photo: req.files ? pdImg : [],
   });
 
   //validated
@@ -97,9 +97,10 @@ const ProductUpdate = (req, res) => {
 
   //get id
   const { id } = req.params;
-
+  //old data
+  const oldData = Product.find(pd => pd.id == id);
   //get index
-  const index = Product.findIndex((data) => data.id == id);
+  const index = Product.findIndex(data => data.id == id);
 
   //product multiple image
   let pdImg = [];
@@ -107,23 +108,40 @@ const ProductUpdate = (req, res) => {
     pdImg.push(pd?.filename);
   });
 
+  //display image
+  let displayImage = [];
+  if(req.files != ""){ 
+    //old image remove
+    oldData?.product_photo.forEach((img) => {
+        removeProductOldImage(img);
+    });
+
+    //new image update
+    displayImage = pdImg
+  }else{
+    displayImage = oldData.product_photo
+  }
+
+
   //validated
-  if (Product.some((data) => data.id == id)) {
+  if (Product.some(item => item.id == id)) {
     //update Product data
     Product[index] = {
       ...Product[index],
       ...req.body,
-      product_photo: req.files ? pdImg : Product[index]?.product_photo,
+      slug: getSlug(req.body?.name),
+      product_photo: displayImage
     };
-
+  
     //update data
-    updateProductDB(Product);
+     updateProductDB(Product);
 
     //responsive
     res.status(200).json({
       status: true,
       message: "Product Update Successfully",
     });
+
   } else {
     //responsive
     res.status(404).json({
@@ -148,8 +166,19 @@ const productDelete = (req, res) => {
   //get data
   const allData = Product.filter((data) => data.id != id);
 
+  //find data
+  const deleteItem = Product.find(data => data.id == id);
+
   //validated
   if (Product.some((data) => data.id == id)) {
+
+    // delete pd image
+    if(deleteItem?.product_photo != ""){
+      deleteItem?.product_photo.forEach((img) => {
+        removeProductOldImage(img);
+      });
+    }
+   
     //update data
     updateProductDB(allData);
 
